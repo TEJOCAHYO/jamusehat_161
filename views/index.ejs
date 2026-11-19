@@ -1,8 +1,8 @@
 <%- include('partials/head', { title }) %>
 <style>.stp{display:inline-flex;align-items:center;gap:6px}.stp button{padding:4px 12px}input.stok{width:80px;text-align:center}</style>
-  <main id="app"><div class="empty">Memuat...</div></main>
+<main id="app"><div class="empty">Memuat...</div></main>
 <script>
-const KELUHAN = <%- JSON.stringify(keluhan) %>, JAM = <%- JSON.stringify(jamAntar) %>, SELLER_ID = <%- JSON.stringify(sellerLogin) %>;
+const KELUHAN = <%- JSON.stringify(keluhan) %>, JAM = <%- JSON.stringify(jamAntar) %>;
 const $ = s => document.querySelector(s);
 const rp = n => 'Rp' + n.toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -20,7 +20,7 @@ const bottle = (n, w = 40) => `<svg class="btl" width="${w}" height="${w*1.5}" v
 
 const stokLabel = m => m.habis ? '<span class="habis">Habis</span>' : m.stok <= 5 ? `<span class="habis">Tinggal ${m.stok} porsi</span>` : `<span class="meta">Tersedia · sisa ${m.stok} porsi</span>`;
 
-/* ---------- Tampilan (data dari API) ---------- */
+/* ---------- Tampilan Pembeli ---------- */
 const VIEWS = {
   async beranda() {
     let h = `<section class="hero"><div><h1>Jamu segar, diantar sampai rumah</h1>
@@ -40,7 +40,7 @@ const VIEWS = {
       ${s.ulasanTerbaru ? `<div class="meta">Ulasan terbaru: "${esc(s.ulasanTerbaru)}"</div>` : ''}</article>`).join('');
   },
   async keranjang() {
-    if (!S.cart.length) return `<div class="empty">${bottle('Sinom', 40)}<h2>Keranjang kosong</h2><p>Pilih jamu di halaman Cari jamu.</p></div>`;
+    if (!S.cart.length) return `<div class="empty">${bottle('Sinom', 40)}<h2>Keranjang kosong</h2><p>Pilih jamu di halaman Etalase pembeli.</p></div>`;
     const menu = await api('/menu'); const mo = id => menu.find(m => m.id === id);
     const total = S.cart.reduce((a, c) => a + mo(c.id).harga * c.qty, 0);
     return `<h1>Keranjang</h1><div class="panel">${S.cart.map(c => { const m = mo(c.id); return `<div class="item">${bottle(m.nama, 30)}<strong>${m.nama}</strong>
@@ -59,51 +59,20 @@ const VIEWS = {
       ${o.status === 'Selesai' && !o.ulasan ? `<form class="row" data-form="ulasan" data-id="${o.id}"><label>Rating<select name="rating">${[5,4,3,2,1].map(n => `<option>${n}</option>`).join('')}</select></label>
         <label style="flex:1">Ulasan<input name="teks" required maxlength="300" placeholder="Ceritakan kebersihan dan rasa jamunya"></label><button>Kirim ulasan</button></form>` : ''}
       ${o.ulasan ? `<div class="meta">Ulasanmu: ★ ${o.ulasan.rating} — ${esc(o.ulasan.teks)}</div>` : ''}</div>`).join('');
-  },
-  async produk() {
-    const list = await api('/produk?sellerId=' + SELLER_ID);
-    const ada = list.filter(p => !p.habis).length;
-    const totalStok = list.reduce((a, p) => a + p.stok, 0);
-    const ed = S.edit && S.edit !== 'baru' ? list.find(p => p.id === S.edit) : null;
-    const form = S.edit ? `<form class="panel" data-form="produk" data-id="${ed ? ed.id : ''}"><h2>${ed ? 'Edit produk' : 'Tambah produk baru'}</h2>
-      <div class="row"><label>Nama jamu<input name="nama" required maxlength="60" value="${ed ? esc(ed.nama) : ''}"></label>
-      <label>Harga (Rp)<input name="harga" type="number" min="1000" max="500000" step="500" required value="${ed ? ed.harga : ''}"></label>
-      <label>Stok (porsi)<input name="stok" type="number" min="0" max="9999" required value="${ed ? ed.stok : 10}"></label></div>
-      <div class="row"><label style="flex:1">Khasiat (dibaca asisten AI)<textarea name="khasiat" rows="2" maxlength="500" placeholder="Mis. secara tradisional dipercaya membantu menghangatkan badan">${ed ? esc(ed.khasiat || '') : ''}</textarea></label></div>
-      <div class="row">${KELUHAN.slice(1).map(k => `<label class="cek"><input type="checkbox" name="keluhan" value="${k}" ${ed && ed.keluhan.includes(k) ? 'checked' : ''}> ${k}</label>`).join('')}</div>
-      <div class="actions"><button>${ed ? 'Simpan perubahan' : 'Simpan produk'}</button><button type="button" class="ghost" data-act="batal">Batal</button></div></form>` : '';
-    return `<div class="bar"><div><h1>Produk saya</h1><div class="meta">Kelola jamu yang kamu jual: tambah, ubah harga, dan tandai habis.</div></div><button data-act="baru">+ Tambah produk</button></div>
-      <div class="stats"><div><b>${list.length}</b>Jenis produk</div><div><b>${totalStok}</b>Total sisa stok (porsi)</div><div><b>${ada}</b>Masih tersedia</div><div><b>${list.length - ada}</b>Habis</div></div>${form}
-      ${list.length ? `<div class="tablewrap"><table><thead><tr><th>Produk</th><th>Harga (Rp)</th><th>Sisa stok (porsi)</th><th>Status</th><th>Aksi</th></tr></thead><tbody>${list.map(p => `<tr class="${p.habis ? 'mati' : ''}">
-        <td><div class="pn">${bottle(p.nama, 26)}<div><strong>${esc(p.nama)}</strong><div>${p.keluhan.map(k => `<span class="tag">${k}</span>`).join('')}</div></div></div></td>
-        <td><input class="harga" type="number" min="1000" max="500000" step="500" value="${p.harga}" data-harga="${p.id}" aria-label="Harga ${esc(p.nama)}"></td>
-        <td><div class="stp"><button class="ghost" data-act="stokUbah" data-id="${p.id}" data-v="${p.stok}" data-d="-1" aria-label="Kurangi stok ${esc(p.nama)}" ${p.stok <= 0 ? 'disabled' : ''}>−</button><input class="harga stok" type="number" min="0" max="9999" value="${p.stok}" data-stok="${p.id}" aria-label="Stok ${esc(p.nama)}"><button class="ghost" data-act="stokUbah" data-id="${p.id}" data-v="${p.stok}" data-d="1" aria-label="Tambah stok ${esc(p.nama)}">+</button></div>${p.stok > 0 && p.stok <= 5 ? '<span class="habis">menipis</span>' : ''}</td>
-        <td><span class="st ${p.habis ? 'Ditolak' : 'Selesai'}">${p.habis ? 'Habis' : 'Tersedia'}</span></td>
-        <td><div class="actions" style="margin:0"><button class="ghost" data-act="edit" data-id="${p.id}">Edit</button><button class="ghost" data-act="habis" data-id="${p.id}" data-h="${p.habis ? 0 : 1}">${p.habis ? 'Tandai tersedia' : 'Tandai habis'}</button><button class="bad" data-act="hapus" data-id="${p.id}">Hapus</button></div></td></tr>`).join('')}</tbody></table></div>`
-      : '<div class="empty">Belum ada produk. Klik "Tambah produk" untuk mulai berjualan.</div>'}`;
-  },
-  async penjual() {
-    const [me, orders] = await Promise.all([api('/sellers/' + SELLER_ID), api('/orders?sellerId=' + SELLER_ID)]);
-    return `<h1>Pesanan masuk</h1><div class="meta">${esc(me.nama)}</div><h2 style="margin:18px 0 8px">Daftar pesanan</h2>` +
-      (orders.length ? orders.map(o => `<div class="order"><span class="st ${o.status}">${o.status}</span> <strong>${rp(o.total)}</strong>
-        <div class="meta">${o.items.map(i => `${i.qty}× ${i.nama}`).join(', ')} · antar: ${o.jam}</div><div class="actions">
-        ${o.status === 'Dibayar' ? `<button data-act="terima" data-id="${o.id}">Terima</button><button class="bad" data-act="tolak" data-id="${o.id}">Tolak</button>` : ''}
-        ${o.status === 'Diproses' ? `<button data-act="selesai" data-id="${o.id}">Tandai selesai diantar</button>` : ''}</div></div>`).join('')
-       : '<div class="empty">Belum ada pesanan. Buat pesanan dari halaman pembeli untuk mencobanya.</div>');
   }
 };
 
 async function render() {
-  const h = location.hash.slice(1), v = Object.hasOwn(VIEWS, h) ? h : 'produk';
+  const h = location.hash.slice(1) || 'beranda', v = Object.hasOwn(VIEWS, h) ? h : 'beranda';
   try { $('#app').innerHTML = await VIEWS[v](); }
   catch (e) { $('#app').innerHTML = '<div class="empty">Gagal memuat data: ' + esc(e.message) + '</div>'; }
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === v));
-  $('#badge').textContent = S.cart.reduce((a, c) => a + c.qty, 0);
+  const badge = $('#badge');
+  if (badge) badge.textContent = S.cart.reduce((a, c) => a + c.qty, 0);
   localStorage.setItem('alamat', JSON.stringify(S.alamat)); localStorage.setItem('cart', JSON.stringify(S.cart));
 }
 addEventListener('hashchange', render);
 
-const status = (b, st, msg) => api(`/orders/${b.dataset.id}/status`, { method: 'PATCH', body: { status: st } }).then(() => toast(msg));
 const A = {
   keluhan: b => { S.keluhan = b.dataset.v; },
   tambah: b => {
@@ -119,38 +88,17 @@ const A = {
     await api('/orders', { method: 'POST', body: { items: S.cart.map(({ id, qty }) => ({ id, qty })), jam: $('#jam').value, metode: $('#metode').value } });
     S.cart = []; toast('Pembayaran berhasil. Pesanan dikirim ke penjual.'); location.hash = '#riwayat';
   },
-  ulang: async b => { const o = (await api('/orders')).find(x => x.id === b.dataset.id); S.cart = o.items.map(i => ({ id: i.id, sellerId: o.sellerId, qty: i.qty })); toast('Item dimasukkan ke keranjang'); location.hash = '#keranjang'; },
-  terima: b => status(b, 'Diproses', 'Pesanan diterima'),
-  tolak: b => status(b, 'Ditolak', 'Pesanan ditolak, dana dikembalikan ke pembeli'),
-  selesai: b => status(b, 'Selesai', 'Pesanan selesai'),
-  stok: b => api(`/menu/${b.dataset.id}/stok`, { method: 'PATCH' }),
-  baru: () => { S.edit = 'baru'; },
-  edit: b => { S.edit = b.dataset.id; },
-  batal: () => { S.edit = null; },
-  stokUbah: b => api('/produk/' + b.dataset.id, { method: 'PUT', body: { stok: Math.max(0, +b.dataset.v + +b.dataset.d) } }).then(() => toast('Stok diperbarui')),
-  habis: b => api('/produk/' + b.dataset.id, { method: 'PUT', body: { habis: b.dataset.h === '1' } }).then(() => toast(b.dataset.h === '1' ? 'Ditandai habis' : 'Ditandai tersedia')),
-  hapus: b => { if (!confirm('Hapus jamu ini dari menu?')) return false; if (S.edit === b.dataset.id) S.edit = null; return api('/produk/' + b.dataset.id, { method: 'DELETE' }).then(() => toast('Produk dihapus')); }
+  ulang: async b => { const o = (await api('/orders')).find(x => x.id === b.dataset.id); S.cart = o.items.map(i => ({ id: i.id, sellerId: o.sellerId, qty: i.qty })); toast('Item dimasukkan ke keranjang'); location.hash = '#keranjang'; }
 };
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   try { if (await A[b.dataset.act](b) === false) return; } catch (err) { toast(err.message); }
   render();
 });
-document.addEventListener('change', async e => {
-  const i = e.target.closest('[data-harga],[data-stok]'); if (!i) return;
-  const harga = i.hasAttribute('data-harga');
-  try { await api('/produk/' + (i.dataset.harga || i.dataset.stok), { method: 'PUT', body: harga ? { harga: +i.value } : { stok: +i.value } }); toast(harga ? 'Harga diperbarui' : 'Stok diperbarui'); } catch (err) { toast(err.message); }
-  render();
-});
 document.addEventListener('submit', async e => {
   const f = e.target.closest('[data-form]'); if (!f) return; e.preventDefault();
   try {
     if (f.dataset.form === 'alamat') { S.alamat = $('#alamat').value.trim(); toast('Alamat disimpan'); }
-    else if (f.dataset.form === 'produk') {
-      const id = f.dataset.id, body = { nama: f.nama.value, harga: +f.harga.value, stok: +f.stok.value, khasiat: f.khasiat.value, keluhan: [...f.querySelectorAll('[name=keluhan]:checked')].map(x => x.value) };
-      if (id) await api('/produk/' + id, { method: 'PUT', body }); else await api('/produk', { method: 'POST', body: { ...body, sellerId: SELLER_ID } });
-      S.edit = null; toast(id ? 'Perubahan disimpan' : 'Produk ditambahkan');
-    }
     else { await api(`/orders/${f.dataset.id}/review`, { method: 'POST', body: { rating: +f.rating.value, teks: f.teks.value.trim() } }); toast('Ulasan terkirim'); }
   } catch (err) { toast(err.message); }
   render();

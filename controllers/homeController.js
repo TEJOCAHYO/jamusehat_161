@@ -2,9 +2,8 @@ const config = require('../config');
 
 exports.index = (req, res) => {
   res.render('index', {
-    title: 'Jamuku - Jamu segar diantar ke rumah',
+    title: 'Jamuku - Etalase Pembeli',
     keluhan: config.keluhan,
-    jamAntar: config.jamAntar,
-    sellerLogin: config.sellerLogin
+    jamAntar: config.jamAntar
   });
 };

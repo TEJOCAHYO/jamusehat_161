@@ -1,5 +1,13 @@
-<nav class="navbar">
-  <a href="/">Etalase pembeli</a>
-  <a href="/keranjang">Keranjang <span class="badge">0</span></a>
-  <a href="/pesanan-saya">Pesanan saya</a>
-</nav>
+<header class="topbar">
+  <div class="brand">Jamuku</div>
+  <nav class="nav-links">
+    <a href="#beranda" data-nav="beranda">Etalase pembeli</a>
+    <a href="#keranjang" data-nav="keranjang">Keranjang <span id="badge" class="badge">0</span></a>
+    <a href="#riwayat" data-nav="riwayat">Pesanan saya</a>
+
+    <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+      <span style="color: #fff; font-size: 13px; margin-left: 10px;">Halo, <%= currentUser.nama %></span>
+      <a href="/logout" style="color: #F5B700; font-weight: bold;">Logout</a>
+    <% } %>
+  </nav>
+</header>

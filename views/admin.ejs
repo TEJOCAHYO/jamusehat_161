@@ -3,115 +3,488 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin - Jamuku</title>
+  <title>Admin Jamuku</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root{--ink:#12281a;--daun:#1f5a36;--kunyit:#f5b700;--tint:#e1eedb;--bg:#f2f7ee;--jahe:#c0432a;--line:#c9dabf}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Nunito Sans",system-ui,sans-serif;height:100vh;display:flex;flex-direction:column}
-    h1{font:800 24px "Bricolage Grotesque",sans-serif;margin:0;color:var(--kunyit)}
-    .top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--ink);padding:12px 20px;color:#fff}
-    .top a{color:#e8f2e2;text-decoration:none;font-size:14px}
-    #stat{display:flex;gap:8px;flex:1;flex-wrap:wrap}
-    #stat span{background:rgba(255,255,255,.12);padding:3px 12px;border-radius:99px;font-size:13px;font-weight:700}
-    #stat span.warn{background:var(--kunyit);color:var(--ink)}
-    .wrap{flex:1;display:grid;grid-template-columns:340px 1fr;min-height:0}
-    aside{border-right:2px solid var(--ink);background:#fff;display:flex;flex-direction:column;min-height:0}
-    .tabs{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-bottom:1px solid var(--line)}
-    button{font:inherit;font-weight:700;border:0;border-radius:99px;padding:8px 16px;cursor:pointer;background:var(--daun);color:#fff}
-    button.g{background:var(--tint);color:var(--ink)}
-    .tabs button{padding:4px 12px;font-size:13px;background:var(--tint);color:var(--ink)}
-    .tabs button.on{background:var(--ink);color:var(--kunyit)}
-    #list{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1}
-    #list li{position:relative;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
-    #list li:hover{background:var(--bg)} #list li.on{background:var(--tint)}
-    #list .top2{display:flex;justify-content:space-between;gap:8px}
-    #list .pv{color:#46604d;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
-    #list .kosong{cursor:default;color:#46604d;text-align:center}
-    .m{font-size:11px;font-weight:800;padding:1px 10px;border-radius:99px;background:var(--tint)}
-    .m.menunggu_admin{background:var(--kunyit)} .m.admin{background:var(--daun);color:#fff} .m.selesai{background:#ddd}
-    .ub{position:absolute;right:12px;bottom:10px;background:var(--jahe);color:#fff;border-radius:99px;font-size:12px;padding:0 8px}
-    #room{display:flex;flex-direction:column;min-height:0;padding:0}
-    #room .kosong{margin:auto;color:#46604d}
-    #hdr{padding:12px 18px;border-bottom:1px solid var(--line);background:#fff;display:flex;gap:10px;align-items:center}
-    #hdr strong{font:800 18px "Bricolage Grotesque",sans-serif}
-    #sum{margin:10px 18px 0;padding:8px 12px;background:#fff6d6;border:2px solid var(--kunyit);border-radius:12px;font-size:14px}
-    #sum:empty{display:none}
-    #log{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:8px}
-    .b{max-width:70%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
-    .b small{display:block;font-size:11px;font-weight:800;opacity:.65}
-    .b.pelanggan{align-self:flex-start;background:var(--kunyit)}
-    .b.ai{align-self:flex-end;background:#fff;border:1px solid var(--line)}
-    .b.admin{align-self:flex-end;background:var(--daun);color:#fff}
-    .b.sistem{align-self:center;background:none;font-size:12px;color:#46604d;max-width:90%}
-    #f{padding:12px 18px;border-top:2px solid var(--ink);background:#fff}
-    #f textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;resize:vertical}
-    .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    @media(max-width:760px){.wrap{grid-template-columns:1fr}aside{max-height:40vh;border-right:0;border-bottom:2px solid var(--ink)}}
+    :root {
+      --ink: #12281a;
+      --daun: #1f5a36;
+      --kunyit: #f5b700;
+      --tint: #e1eedb;
+      --bg: #f2f7ee;
+      --jahe: #c0432a;
+      --line: #c9dabf;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Nunito Sans", system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    h1, h2 { font-family: "Bricolage Grotesque", sans-serif; margin: 0; }
+    
+    /* Navbar Atas */
+    .top { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--ink); padding: 12px 20px; color: #fff; position: sticky; top: 0; z-index: 10; }
+    .top .brand { font: 800 24px "Bricolage Grotesque", sans-serif; color: var(--kunyit); text-decoration: none; }
+    .admin-nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .admin-nav button { background: transparent; color: #e8f2e2; border: 0; padding: 8px 16px; border-radius: 99px; cursor: pointer; font: inherit; font-weight: 600; }
+    .admin-nav button.active { background: var(--kunyit); color: var(--ink); }
+    .admin-nav button:hover { background: rgba(255,255,255,0.1); }
+    
+    .container { padding: 24px 20px; max-width: 1150px; margin: 0 auto; width: 100%; flex: 1; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .panel { background: #fff; border: 2px solid var(--ink); border-radius: 20px; padding: 24px; margin-bottom: 20px; box-shadow: 5px 5px 0 var(--ink); }
+
+    /* --- STYLING PRODUK SAYA & PESANAN --- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+    .stats div { background: #fff; border: 2px solid var(--ink); padding: 16px; border-radius: 16px; font-weight: 700; box-shadow: 3px 3px 0 var(--ink); }
+    .stats div b { display: block; font-size: 32px; color: var(--ink); font-family: "Bricolage Grotesque", sans-serif; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 16px 10px; text-align: left; border-bottom: 1px dashed var(--line); font-size: 14px; vertical-align: middle; }
+    th { background: transparent; color: var(--ink); font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--ink); }
+    .btn { font: inherit; font-weight: 700; border: 0; border-radius: 99px; padding: 8px 18px; cursor: pointer; background: var(--daun); color: #fff; display: inline-block; }
+    .btn.bad { background: var(--jahe); }
+    .btn.pill { padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 99px; border: 0; cursor: pointer; }
+    .tag { background: var(--tint); border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 600; display: inline-block; margin-top: 4px; color: var(--ink); }
+    .st { padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 800; display: inline-block; }
+    .st.Tersedia { background: var(--daun); color: #fff; }
+    .st.Habis { background: var(--jahe); color: #fff; }
+    .st.Dibayar { background: var(--kunyit); color: var(--ink); }
+    .st.Diproses { background: #3b82f6; color: #fff; }
+    .qty-control { display: flex; align-items: center; gap: 6px; }
+    .qty-control button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--tint); color: var(--ink); font-weight: bold; cursor: pointer; display: grid; place-items: center; padding: 0; font-size: 16px; }
+    .qty-control input { width: 56px; text-align: center; padding: 8px; border: 1px solid var(--line); border-radius: 8px; font-weight: 700; font-size: 15px; }
+    .price-input { width: 100px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; font-weight: 700; font-size: 15px; }
+    .order-card { background: #fff; border: 2px solid var(--ink); padding: 18px; border-radius: 16px; margin-bottom: 14px; box-shadow: 4px 4px 0 var(--ink); }
+
+    /* --- STYLING PUSAT BANTUAN AI & CHAT (SESUAI GAMBAR) --- */
+    .ai-wrapper { display: flex; flex-direction: column; gap: 14px; }
+    .ai-top-stats { display: flex; gap: 10px; flex-wrap: wrap; background: var(--ink); padding: 12px 16px; border-radius: 12px; align-items: center; }
+    .ai-top-stats span { background: rgba(255,255,255,.12); color: #fff; padding: 4px 12px; border-radius: 99px; font-size: 13px; font-weight: 700; }
+    .ai-top-stats span.warn { background: var(--kunyit); color: var(--ink); }
+    
+    .ai-layout { display: grid; grid-template-columns: 320px 1fr; border: 2px solid var(--ink); border-radius: 16px; background: #fff; overflow: hidden; min-height: 540px; box-shadow: 4px 4px 0 var(--ink); }
+    .ai-sidebar { border-right: 2px solid var(--line); background: #fafdf8; display: flex; flex-direction: column; }
+    .ai-filter-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px; border-bottom: 1px solid var(--line); background: #fff; }
+    .ai-filter-tabs button { padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 99px; border: 0; background: var(--tint); color: var(--ink); cursor: pointer; }
+    .ai-filter-tabs button.on { background: var(--ink); color: var(--kunyit); }
+    
+    .ai-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; max-height: 460px; }
+    .ai-list li { padding: 14px; border-bottom: 1px solid var(--line); cursor: pointer; position: relative; }
+    .ai-list li:hover { background: var(--bg); }
+    .ai-list li.on { background: var(--tint); }
+    .ai-list .top2 { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; margin-bottom: 4px; }
+    .ai-list .pv { color: #46604d; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+    .badge-mode { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--tint); }
+    .badge-mode.ai { background: var(--kunyit); color: var(--ink); }
+    .badge-mode.admin { background: var(--daun); color: #fff; }
+    .badge-mode.selesai { background: #71717a; color: #fff; }
+
+    .ai-room { display: flex; flex-direction: column; background: #fff; }
+    .ai-room-hdr { padding: 14px 18px; border-bottom: 1px solid var(--line); background: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .ai-room-log { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; max-height: 380px; }
+    
+    .chat-bubble { max-width: 75%; padding: 12px 16px; border-radius: 14px; font-size: 14px; word-wrap: break-word; line-height: 1.5; }
+    .chat-bubble small { display: block; font-size: 10px; font-weight: 800; opacity: 0.65; margin-bottom: 4px; }
+    .chat-bubble.pelanggan { align-self: flex-start; background: var(--kunyit); color: var(--ink); border-bottom-left-radius: 2px; }
+    .chat-bubble.ai { align-self: flex-end; background: #fff; border: 1px solid var(--line); border-bottom-right-radius: 2px; }
+    .chat-bubble.admin { align-self: flex-end; background: var(--daun); color: #fff; border-bottom-right-radius: 2px; }
+    .chat-bubble.sistem { align-self: center; background: #eee; color: #555; font-size: 12px; padding: 6px 12px; border-radius: 8px; text-align: center; }
+
+    .ai-room-form { padding: 14px 18px; border-top: 2px solid var(--ink); background: #fff; }
+    .ai-room-form textarea { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: 10px; resize: none; height: 65px; }
+    .ai-room-acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+    .user-box { color: #fff; font-size: 14px; display: flex; align-items: center; gap: 12px; }
+    .user-box a { color: var(--kunyit); text-decoration: none; font-weight: 700; }
   </style>
 </head>
 <body>
-  <div class="top"><h1>Admin Jamuku</h1><div id="stat"></div><a href="/">← Kembali ke toko</a></div>
-  <div class="wrap">
-    <aside>
-      <div class="tabs" id="tabs">
-        <button class="on" data-f="semua">Semua</button><button data-f="menunggu_admin">Perlu admin</button>
-        <button data-f="ai">AI</button><button data-f="admin">Admin</button><button data-f="selesai">Selesai</button>
+  <header class="top">
+    <a href="/admin" class="brand">Admin Jamuku</a>
+    <div class="admin-nav">
+      <button class="active" onclick="switchTab('produk', this)">Produk saya</button>
+      <button onclick="switchTab('pesanan', this)">Pesanan masuk</button>
+      <button onclick="switchTab('ai', this)">Pusat Bantuan AI & Chat</button>
+    </div>
+    <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+      <div class="user-box">
+        <span>Halo, <%= currentUser.nama %></span>
+        <a href="/logout">Logout</a>
       </div>
-      <ul id="list"></ul>
-    </aside>
-    <main id="room"><div class="kosong">Pilih percakapan di sebelah kiri.</div></main>
+    <% } %>
+  </header>
+
+  <div class="container">
+    <!-- TAB 1: PRODUK SAYA -->
+    <div id="tab-produk" class="tab-content active">
+      <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h1 style="font-size:32px; font-weight:800; letter-spacing:-0.5px;">Produk saya</h1>
+            <p style="color:#46604d; margin:4px 0 0;">Kelola jamu yang kamu jual: tambah, ubah harga, dan tandai habis.</p>
+          </div>
+          <button class="btn" style="background:var(--daun);" onclick="tambahProduk()">+ Tambah produk</button>
+        </div>
+
+        <div class="stats">
+          <div>Jenis produk<b id="stat-jenis">4</b></div>
+          <div>Total sisa stok (porsi)<b id="stat-stok">79</b></div>
+          <div>Masih tersedia<b id="stat-tersedia">4</b></div>
+          <div>Habis<b id="stat-habis">0</b></div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28%;">PRODUK</th>
+              <th style="width:18%;">HARGA (RP)</th>
+              <th style="width:20%;">SISA STOK (PORSI)</th>
+              <th style="width:14%;">STATUS</th>
+              <th style="width:20%; text-align:right;">AKSI</th>
+            </tr>
+          </thead>
+          <tbody id="tabel-produk"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: PESANAN MASUK -->
+    <div id="tab-pesanan" class="tab-content">
+      <div class="panel">
+        <h1 style="font-size:32px; font-weight:800; margin-bottom:4px;">Pesanan masuk</h1>
+        <p style="color:#46604d; margin-bottom:20px;">Daftar pesanan terbaru dari pembeli yang perlu diproses.</p>
+        <div id="list-pesanan"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: PUSAT BANTUAN AI & CHAT -->
+    <div id="tab-ai" class="tab-content">
+      <div class="ai-wrapper">
+        <div class="ai-top-stats" id="ai-stats-bar">
+          <!-- Statistik otomatis -->
+        </div>
+
+        <div class="ai-layout">
+          <div class="ai-sidebar">
+            <div class="ai-filter-tabs" id="ai-filters">
+              <button class="on" onclick="filterChat('semua', this)">Semua</button>
+              <button onclick="filterChat('menunggu_admin', this)">Perlu admin</button>
+              <button onclick="filterChat('ai', this)">AI</button>
+              <button onclick="filterChat('admin', this)">Admin</button>
+              <button onclick="filterChat('selesai', this)">Selesai</button>
+            </div>
+            <ul class="ai-list" id="ai-chat-list"></ul>
+          </div>
+
+          <div class="ai-room" id="ai-room-box">
+            <!-- Ruang Chat Interaktif -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-<script>
-const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const MODE = { ai: 'AI menjawab', menunggu_admin: 'Perlu admin', admin: 'Ditangani admin', selesai: 'Selesai' };
-const ROLE = { pelanggan: 'Pelanggan', ai: 'Asisten AI', admin: 'Admin', sistem: 'Sistem' };
-const S = { sel: null, filter: 'semua', list: [] };
-const api = async (u, o = {}) => {
-  const r = await fetch('/admin/api' + u, { method: o.method || 'GET', headers: { 'Content-Type': 'application/json' }, body: o.body ? JSON.stringify(o.body) : undefined });
-  const d = await r.json(); if (!r.ok) throw new Error(d.pesan || 'Gagal'); return d;
-};
-function statistik() {
-  const n = m => S.list.filter(x => x.mode === m).length;
-  $('#stat').innerHTML = `<span>${S.list.length} percakapan</span><span class="${n('menunggu_admin') ? 'warn' : ''}">${n('menunggu_admin')} perlu admin</span><span>${n('ai')} dijawab AI</span><span>${n('admin')} ditangani admin</span><span>${n('selesai')} selesai</span>`;
-}
-function gambarDaftar() {
-  const L = S.list.filter(x => S.filter === 'semua' || x.mode === S.filter);
-  $('#list').innerHTML = L.length ? L.map(x => `<li class="${x.id === S.sel ? 'on' : ''}" data-id="${x.id}">
-    <div class="top2"><strong>${esc(x.nama)}</strong><span class="m ${x.mode}">${MODE[x.mode]}</span></div>
-    <div class="pv">${x.pesanTerakhir ? esc(ROLE[x.pesanTerakhir.role] + ': ' + x.pesanTerakhir.teks) : ''}</div>${x.unread ? `<span class="ub">${x.unread}</span>` : ''}</li>`).join('') : '<li class="kosong">Belum ada percakapan</li>';
-}
-async function daftar() { S.list = await api('/percakapan'); statistik(); gambarDaftar(); }
-async function muat() {
-  if (!S.sel) return;
-  const d = await api('/percakapan/' + S.sel);
-  $('#hdr').innerHTML = `<strong>${esc(d.nama)}</strong><span class="m ${d.mode}">${MODE[d.mode]}</span>`;
-  $('#sum').innerHTML = d.ringkasan ? `<b>Ringkasan AI untuk admin:</b> ${esc(d.ringkasan)}` : '';
-  const log = $('#log'), bawah = log.scrollHeight - log.scrollTop - log.clientHeight < 60;
-  log.innerHTML = d.messages.map(m => `<div class="b ${m.role}"><small>${ROLE[m.role]} · ${new Date(m.waktu).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small>${esc(m.teks)}</div>`).join('');
-  if (bawah) log.scrollTop = log.scrollHeight;
-}
-function pilih(id) {
-  S.sel = id;
-  $('#room').innerHTML = `<div id="hdr"></div><div id="sum"></div><div id="log"></div>
-    <form id="f"><textarea id="t" rows="2" maxlength="1000" placeholder="Balas pelanggan sebagai admin… (Enter untuk kirim)" required></textarea>
-    <div class="acts"><button>Kirim sebagai admin</button><button type="button" class="g" data-m="ai">Kembalikan ke AI</button><button type="button" class="g" data-m="selesai">Tandai selesai</button></div></form>`;
-  $('#t').addEventListener('keydown', ev => { if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); $('#f').requestSubmit(); } });
-  $('#f').addEventListener('submit', async ev => {
-    ev.preventDefault(); const t = $('#t').value.trim(); if (!t) return;
-    try { await api(`/percakapan/${S.sel}/balas`, { method: 'POST', body: { teks: t } }); $('#t').value = ''; await muat(); const l = $('#log'); l.scrollTop = l.scrollHeight; daftar(); } catch (e) { alert(e.message); }
-  });
-  $('#f').addEventListener('click', async ev => {
-    const b = ev.target.closest('[data-m]'); if (!b) return;
-    try { await api(`/percakapan/${S.sel}/mode`, { method: 'PATCH', body: { mode: b.dataset.m } }); await muat(); daftar(); } catch (e) { alert(e.message); }
-  });
-  muat().then(() => { const l = $('#log'); l.scrollTop = l.scrollHeight; daftar(); });
-}
-$('#list').addEventListener('click', ev => { const li = ev.target.closest('li[data-id]'); if (li) pilih(li.dataset.id); });
-$('#tabs').addEventListener('click', ev => { const b = ev.target.closest('[data-f]'); if (!b) return; S.filter = b.dataset.f; document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b)); gambarDaftar(); });
-daftar().catch(e => $('#list').innerHTML = `<li class="kosong">${esc(e.message)}</li>`);
-setInterval(() => { daftar().catch(() => {}); muat().catch(() => {}); }, 4000);
-</script>
+
+  <script>
+    // --- MANAJEMEN TAB UTAMA ---
+    function switchTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.admin-nav button').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btnElement.classList.add('active');
+      if(tabName === 'ai') {
+        renderAIUI();
+      }
+    }
+
+    // --- DATA & LOGIKA PRODUK SAYA ---
+    const WARNA_BOTOL = {"Beras kencur":"#efe2b0","Kunyit asam":"#e8a317","Cabe puyang":"#c8512b","Temulawak":"#e58a1f"};
+    const svgBotol = (n) => `<svg width="32" height="48" viewBox="0 0 40 60" style="flex:none;"><rect x="15" y="1" width="10" height="9" rx="2" fill="#6b4a2b"/><path d="M14 10h12v6c6 3 8 8 8 14v23a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V30c0-6 2-11 8-14z" fill="#fff" stroke="#12281a" stroke-width="2.5"/><path d="M7.5 32h25v21a4.5 4.5 0 0 1-4.500 4.500h-16A4.500 4.500 0 0 1 7.500 53z" fill="${WARNA_BOTOL[n] || '#e8a317'}"/></svg>`;
+
+    let produkList = [
+      { id: 1, nama: 'Beras kencur', keluhan: ['Pegal linu', 'Masuk angin'], harga: 8000, stok: 19, status: 'Tersedia' },
+      { id: 2, nama: 'Kunyit asam', keluhan: ['Datang bulan'], harga: 8000, stok: 20, status: 'Tersedia' },
+      { id: 3, nama: 'Cabe puyang', keluhan: ['Pegal linu'], harga: 9000, stok: 20, status: 'Tersedia' },
+      { id: 4, nama: 'Temulawak', keluhan: ['Masuk angin', 'Pegal linu'], harga: 10000, stok: 20, status: 'Tersedia' }
+    ];
+
+    let pesananList = [
+      { id: 1, item: '1× Beras kencur', harga: 'Rp8.000', status: 'Dibayar', antar: 'Secepatnya (maks. 45 menit)' }
+    ];
+
+    function renderProduk() {
+      const tbody = document.getElementById('tabel-produk');
+      tbody.innerHTML = produkList.map(p => `
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:12px;">
+              ${svgBotol(p.nama)}
+              <div>
+                <strong style="font-size:16px;">${p.nama}</strong><br>
+                <div>${p.keluhan.map(k => `<span class="tag">${k}</span>`).join('')}</div>
+              </div>
+            </div>
+          </td>
+          <td><input type="number" class="price-input" value="${p.harga}" onchange="updateHarga(${p.id}, this.value)"></td>
+          <td>
+            <div class="qty-control">
+              <button onclick="ubahStok(${p.id}, -1)">−</button>
+              <input type="text" value="${p.stok}" readonly>
+              <button onclick="ubahStok(${p.id}, 1)">+</button>
+            </div>
+          </td>
+          <td><span class="st ${p.status}">${p.status}</span></td>
+          <td style="text-align:right;">
+            <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center;">
+              <button class="btn pill" style="background:#e1eedb; color:var(--ink);" onclick="editProduk(${p.id})">Edit</button>
+              <button class="btn pill" style="background:#e1eedb; color:var(--ink);" onclick="toggleHabis(${p.id})">${p.status === 'Tersedia' ? 'Tandai habis' : 'Tersedia'}</button>
+              <button class="btn pill bad" onclick="hapusProduk(${p.id})">Hapus</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('stat-jenis').textContent = produkList.length;
+      document.getElementById('stat-stok').textContent = produkList.reduce((acc, cur) => acc + cur.stok, 0);
+      document.getElementById('stat-tersedia').textContent = produkList.filter(p => p.status === 'Tersedia').length;
+      document.getElementById('stat-habis').textContent = produkList.filter(p => p.status === 'Habis').length;
+    }
+
+    function ubahStok(id, delta) {
+      const p = produkList.find(x => x.id === id);
+      if (p) {
+        p.stok = Math.max(0, p.stok + delta);
+        p.status = p.stok === 0 ? 'Habis' : 'Tersedia';
+        renderProduk();
+      }
+    }
+
+    function updateHarga(id, val) {
+      const p = produkList.find(x => x.id === id);
+      if (p) p.harga = parseInt(val) || p.harga;
+    }
+
+    function tambahProduk() {
+      const nama = prompt('Nama Jamu baru:');
+      if (!nama) return;
+      const harga = parseInt(prompt('Harga (Rp):', '9000')) || 8000;
+      const stok = parseInt(prompt('Jumlah Stok (Porsi):', '20')) || 15;
+      produkList.push({ id: Date.now(), nama, keluhan: ['Segar'], harga, stok, status: 'Tersedia' });
+      renderProduk();
+    }
+
+    function editProduk(id) {
+      const p = produkList.find(x => x.id === id);
+      if (!p) return;
+      const namaBaru = prompt('Ubah Nama Jamu:', p.nama);
+      if (namaBaru) p.nama = namaBaru;
+      renderProduk();
+    }
+
+    function toggleHabis(id) {
+      const p = produkList.find(x => x.id === id);
+      if (p) {
+        p.status = p.status === 'Tersedia' ? 'Habis' : 'Tersedia';
+        if (p.status === 'Habis') p.stok = 0;
+        renderProduk();
+      }
+    }
+
+    function hapusProduk(id) {
+      if (confirm('Yakin ingin menghapus produk ini?')) {
+        produkList = produkList.filter(x => x.id !== id);
+        renderProduk();
+      }
+    }
+
+    // --- LOGIKA PESANAN MASUK ---
+    function renderPesanan() {
+      const container = document.getElementById('list-pesanan');
+      if (!pesananList.length) {
+        container.innerHTML = '<p style="color:#666; text-align:center; padding:20px;">Tidak ada pesanan masuk.</p>';
+        return;
+      }
+      container.innerHTML = pesananList.map(o => `
+        <div class="order-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div><span class="st ${o.status}">${o.status}</span> <strong style="margin-left:8px;">${o.harga}</strong></div>
+            <small style="color:#666;">Antar: ${o.antar}</small>
+          </div>
+          <p style="margin:6px 0 14px; font-weight:600;">${o.item}</p>
+          <div style="display:flex; gap:8px;">
+            ${o.status === 'Dibayar' ? `
+              <button class="btn" style="background:var(--daun); padding:6px 16px;" onclick="prosesPesanan(${o.id}, 'Diproses')">Terima</button>
+              <button class="btn bad" style="padding:6px 16px;" onclick="prosesPesanan(${o.id}, 'Ditolak')">Tolak</button>
+            ` : ''}
+            <button class="btn pill bad" style="background:var(--jahe);" onclick="hapusPesanan(${o.id})">Hapus Pesanan</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function prosesPesanan(id, status) {
+      const o = pesananList.find(x => x.id === id);
+      if (o) { o.status = status; renderPesanan(); }
+    }
+
+    function hapusPesanan(id) {
+      if (confirm('Hapus pesanan ini dari daftar?')) {
+        pesananList = pesananList.filter(x => x.id !== id);
+        renderPesanan();
+      }
+    }
+
+    // --- LOGIKA PUSAT BANTUAN AI & CHAT INTERAKTIF ---
+    let currentFilter = 'semua';
+    let selectedChatId = 1;
+
+    let chatList = [
+      {
+        id: 1,
+        nama: 'Pelanggan',
+        mode: 'ai',
+        messages: [
+          { role: 'pelanggan', waktu: '21.50', teks: 'Jamu apa untuk datang bulan?' },
+          { role: 'ai', waktu: '21.50', teks: 'Untuk keluhan datang bulan, ini pilihannya:\n• Kunyit asam (Rp8.000): Secara tradisional diminum perempuan saat datang bulan; dipercaya membantu menyegarkan badan dan meredakan rasa tidak nyaman.\nJamu bukan pengganti obat; jika keluhan berlanjut, periksakan ke tenaga kesehatan.' },
+          { role: 'sistem', waktu: '21.52', teks: 'Admin mengembalikan percakapan ke asisten AI. Silakan lanjut bertanya.' },
+          { role: 'pelanggan', waktu: '23.04', teks: 'sakit kepala' },
+          { role: 'ai', waktu: '23.04', teks: 'Belum ada jamu khusus sakit kepala di katalog kami, tetapi jika pusingnya terkait masuk angin, ini bisa dicoba:\n• Beras kencur (Rp8.000): Secara tradisional dipercaya menyegarkan badan, membantu meredakan pegal, dan menghangatkan tubuh saat masuk angin.\nJamu bukan pengganti obat; jika keluhan berlanjut, periksakan ke tenaga kesehatan.' }
+        ]
+      },
+      {
+        id: 2,
+        nama: 'Pelanggan',
+        mode: 'ai',
+        messages: [
+          { role: 'pelanggan', waktu: '19.10', teks: 'Ada jamu untuk pegal linu?' },
+          { role: 'ai', waktu: '19.10', teks: 'Silakan cek Beras kencur atau Cabe puyang kami.' }
+        ]
+      }
+    ];
+
+    function filterChat(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('#ai-filters button').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      renderChatList();
+    }
+
+    function renderAIUI() {
+      // Hitung statistik
+      const total = chatList.length;
+      const perluAdmin = chatList.filter(c => c.mode === 'menunggu_admin').length;
+      const aiCount = chatList.filter(c => c.mode === 'ai').length;
+      const adminCount = chatList.filter(c => c.mode === 'admin').length;
+      const selesaiCount = chatList.filter(c => c.mode === 'selesai').length;
+
+      document.getElementById('ai-stats-bar').innerHTML = `
+        <span>${total} percakapan</span>
+        <span class="${perluAdmin > 0 ? 'warn' : ''}">${perluAdmin} perlu admin</span>
+        <span>${aiCount} dijawab AI</span>
+        <span>${adminCount} ditangani admin</span>
+        <span>${selesaiCount} selesai</span>
+      `;
+
+      renderChatList();
+      renderChatRoom();
+    }
+
+    function renderChatList() {
+      const filtered = chatList.filter(c => {
+        if (currentFilter === 'semua') return true;
+        return c.mode === currentFilter;
+      });
+
+      const ul = document.getElementById('ai-chat-list');
+      if (!filtered.length) {
+        ul.innerHTML = '<li style="color:#666; text-align:center; padding:20px;">Tidak ada percakapan.</li>';
+        return;
+      }
+
+      ul.innerHTML = filtered.map(c => {
+        const lastMsg = c.messages[c.messages.length - 1];
+        const modeLabel = c.mode === 'ai' ? 'AI menjawab' : c.mode === 'admin' ? 'Ditangani admin' : c.mode === 'selesai' ? 'Selesai' : 'Perlu admin';
+        return `
+          <li class="${c.id === selectedChatId ? 'on' : ''}" onclick="selectChat(${c.id})">
+            <div class="top2">
+              <span>${c.nama}</span>
+              <span class="badge-mode ${c.mode}">${modeLabel}</span>
+            </div>
+            <div class="pv">${lastMsg ? (lastMsg.role === 'pelanggan' ? 'Pelanggan: ' : lastMsg.role === 'ai' ? 'AI: ' : 'Admin: ') + lastMsg.teks : ''}</div>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function selectChat(id) {
+      selectedChatId = id;
+      renderChatList();
+      renderChatRoom();
+    }
+
+    function renderChatRoom() {
+      const roomBox = document.getElementById('ai-room-box');
+      const c = chatList.find(x => x.id === selectedChatId);
+      if (!c) {
+        roomBox.innerHTML = '<div style="margin:auto; color:#666; padding:20px; text-align:center;">Pilih percakapan di sebelah kiri untuk mulai merespon.</div>';
+        return;
+      }
+
+      const modeLabel = c.mode === 'ai' ? 'AI menjawab' : c.mode === 'admin' ? 'Ditangani admin' : c.mode === 'selesai' ? 'Selesai' : 'Perlu admin';
+
+      roomBox.innerHTML = `
+        <div class="ai-room-hdr">
+          <div><strong style="font-size:16px;">${c.nama}</strong></div>
+          <span class="badge-mode ${c.mode}" style="font-size:12px; padding:4px 12px;">${modeLabel}</span>
+        </div>
+        <div class="ai-room-log" id="log-chat">
+          ${c.messages.map(m => `
+            <div class="chat-bubble ${m.role}">
+              <small>${m.role.toUpperCase()} · ${m.waktu}</small>
+              ${m.teks.replace(/\n/g, '<br>')}
+            </div>
+          `).join('')}
+        </div>
+        <form class="ai-room-form" onsubmit="KirimBalasan(event)">
+          <textarea id="input-balasan" placeholder="Balas pelanggan sebagai admin... (Enter untuk kirim)" required onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); this.form.requestSubmit();}"></textarea>
+          <div class="ai-room-acts">
+            <button class="btn" style="background:var(--daun); padding:6px 16px; font-size:13px;">Kirim sebagai admin</button>
+            <button type="button" class="btn pill" style="background:var(--tint); color:var(--ink);" onclick="ubahModeChat('ai')">Kembalikan ke AI</button>
+            <button type="button" class="btn pill" style="background:var(--tint); color:var(--ink);" onclick="ubahModeChat('selesai')">Tandai selesai</button>
+          </div>
+        </form>
+      `;
+      const log = document.getElementById('log-chat');
+      if(log) log.scrollTop = log.scrollHeight;
+    }
+
+    function KirimBalasan(e) {
+      e.preventDefault();
+      const txt = document.getElementById('input-balasan').value.trim();
+      if (!txt) return;
+      const c = chatList.find(x => x.id === selectedChatId);
+      if (c) {
+        const jam = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+        c.messages.push({ role: 'admin', waktu: jam, teks: txt });
+        c.mode = 'admin';
+        renderAIUI();
+      }
+    }
+
+    function ubahModeChat(m) {
+      const c = chatList.find(x => x.id === selectedChatId);
+      if (c) {
+        c.mode = m;
+        const jam = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+        let ket = m === 'ai' ? 'Admin mengembalikan percakapan ke asisten AI.' : 'Percakapan ditandai selesai.';
+        c.messages.push({ role: 'sistem', waktu: jam, teks: ket });
+        renderAIUI();
+      }
+    }
+
+    // --- INISIALISASI AWAL ---
+    renderProduk();
+    renderPesanan();
+    renderAIUI();
+  </script>
 </body>
 </html>
